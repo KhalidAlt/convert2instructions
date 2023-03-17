@@ -1,3 +1,79 @@
+from datasets import load_dataset
+
+import random
+def mask_words(text):
+    text = text.split()
+    num_mask = random.choice()
+    index = random.choice(range(len(text)))
+    text[index] = '....'
+    
+import random
+
+def mask_words(sentence, prob_mask=0.1):
+    """Randomly replace words in a sentence based on
+    a given probability.
+    args:
+        sentence (str): The sentence to be replace with ...
+        prob_mask (float): The probability of a word being masked.
+    Returns:
+        str: The sentence with the masked words.
+    """
+    words = sentence.split(' ')
+    n = n = round(len(words) * prob_mask)
+    maskedw = ['The missing words:']
+    for i in random.sample(range(len(words)), n):
+        maskedw.append(f'{words[i]},')
+        words[i] = '...'
+    
+    maskedw[-1] = maskedw[-1].replace(',','')
+    merged_words = []
+    for word in words:
+        if word == '*':
+            if merged_words and merged_words[-1] == '*':
+                continue
+            merged_words.append('*')
+        else:
+            merged_words.append(word)
+    
+    return ' '.join(merged_words)      
+
+
+
+def mask_sentence(sentence, prob_mask=0.1):
+    """
+    """
+    words = sentence.split('.')
+    n = n = round(len(words) * prob_mask)
+    masked_sen = []
+    for i in random.sample(range(len(words)), n):
+        masked_sen.append(words[i])
+        words[i] = '...'
+    
+    merged_words = []
+    for word in words:
+        if word == '*':
+            if merged_words and merged_words[-1] == '*':
+                continue
+            merged_words.append('*')
+        else:
+            merged_words.append(word)
+    return ' '.join(merged_words)     
+
+
+
+def mask_paragraph(sentence):
+    """
+    """
+    words = sentence.split('\n')[:-1]
+    n = n = round(len(words) * prob_mask)
+    
+    i = random.sample(range(len(words)),1)[0]
+    missing = words[i]
+    words[i] = '...'
+    
+    return ' '.join(words),missing
+
+   
 w_styles = {'NA':'Narrative',
  'IN': 'Informational Description',
  'OP':'Opinion',
@@ -18,6 +94,15 @@ instructions = {'free_style':['Write {n} sentences about {topic} in {style_name}
 
 sub_pro = ['I', 'you', 'thy', 'he', 'she', 'it', 'one', 'we', 'you', 'who', 'what', 'well','the', 'is','are' ]
 
+
+def get_article(word):
+    vowels = ['a', 'e', 'i', 'o', 'u']
+    if word[0].lower() in vowels:
+        return 'an'
+    else:
+        return 'a'
+     
+     
 
 def generate_inst(ex, topic=None):
     
@@ -61,3 +146,10 @@ def generate_inst(ex, topic=None):
         ex['prompt'] = ''
 
     return ex
+
+   
+ds = load_dataset('TurkuNLP/register_oscar','en',cache_dir='/media/khalid/data_disk/cache_dataset/TurkuNLP/')
+ds = ds.map(generate_inst)
+ds.to_json('oscar.json',
+          orient = 'records',
+          lines=True,)
