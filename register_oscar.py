@@ -1,6 +1,7 @@
 from datasets import load_dataset
-
+import re
 import random
+
 def mask_words(text):
     text = text.split()
     num_mask = random.choice()
